@@ -173,7 +173,8 @@ Follow these steps to run the project locally on your machine:
 
 1. **Clone the repository** (or navigate to the workspace folder):
    ```bash
-   cd C:\Users\User\.gemini\antigravity\scratch\intelligent-media-processing
+   git clone https://github.com/navyashreern11/intelligent-media-processing.git
+   cd intelligent-media-processing
    ```
 
 2. **Create and activate a virtual environment**:
