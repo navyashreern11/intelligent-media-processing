@@ -476,6 +476,8 @@ This separation keeps image metadata, job lifecycle information, and analysis re
 ### Automated Tests
 ![Test Results](screenshots/14testpasses.png)
 
+### Image 2 Test Result
 ![Image 2 Result](screenshots/image2%20result.png)
 
+### Image 3 Test Result
 ![Image 3 Result](screenshots/image3%20result.png)
