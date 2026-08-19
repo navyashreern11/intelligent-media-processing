@@ -160,7 +160,6 @@ intelligent-media-processing/
 │   └── generate_test_images.py  # Script to programmatically generate synthetic test files
 │
 ├── .env.example              # Template environment variables
-├── .env                      # Local runtime environment overrides
 ├── .gitignore
 ├── requirements.txt          # Python dependency list
 ├── README.md                 # Detailed documentation
@@ -416,3 +415,62 @@ To transition this prototype into a production-grade system, the following impro
 4. **Production DB**: Use **PostgreSQL** with appropriate indexing on hashes and job status fields. Use **Alembic** for schema migrations.
 5. **Security Enhancements**: Add token-based authentication (OAuth2/JWT) to secure APIs, implement rate limiting, and execute uploads through a virus scanner (e.g., ClamAV).
 6. **Advanced ML Models**: Replace basic computer vision heuristics (aspect ratios, Canny shapes) with deep learning object detection models (e.g., YOLO or custom CNNs trained on license plates and image tampering datasets).
+---
+
+## 18. Database Design
+
+The system uses SQLite with SQLAlchemy ORM and separates information into three main tables:
+
+- `images` — stores uploaded image metadata and SHA-256/dhash information.
+- `processing_jobs` — tracks processing status, timestamps, retry count, and errors.
+- `analysis_results` — stores image analysis metrics and confidence values.
+
+This separation keeps image metadata, job lifecycle information, and analysis results organized independently.
+
+---
+
+## 19. Assumptions
+
+- The system is designed as a local prototype running on a single machine.
+- Uploaded files are assumed to be vehicle-related images.
+- A maximum upload size of 10 MB is enforced.
+- SHA-256 is used to identify exact binary duplicates.
+- Vehicle registration validation checks the registration format only and does not verify government records.
+- Image quality, screenshot, photo-of-photo, and tampering detection are heuristic signals and are not forensic conclusions.
+- The in-memory queue is suitable for this prototype but is not intended for durable production workloads.
+- Tesseract OCR is optional; if unavailable, the pipeline continues with `OCR_UNAVAILABLE`.
+
+## 18. Screenshots
+
+### API Documentation
+![API Documentation](screenshots/IMPP%20pipeline.png)
+
+### Image Upload
+![Image Upload](screenshots/upload1.png)
+
+### Upload Response
+![Upload Response](screenshots/upload2.png)
+
+### Processing Status
+![Processing Status](screenshots/status1.png)
+
+### Processing Results
+![Processing Results](screenshots/result1.png)
+
+### Additional Results
+![Additional Results](screenshots/result2.png)
+
+### Duplicate Detection
+![Duplicate Detection](screenshots/duplicate.png)
+
+### Retry Job
+![Retry Job](screenshots/retry%20job1.png)
+
+### Analytics Summary
+![Analytics Summary](screenshots/analytics%20summary.png)
+
+### Dashboard
+![Dashboard](screenshots/dashboardss.png)
+
+### Automated Tests
+![Test Results](screenshots/14testpasses.png)
