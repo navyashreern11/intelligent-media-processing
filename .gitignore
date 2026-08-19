@@ -1,0 +1,14 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+.env
+*.db
+media_processing.db
+uploads/*
+!uploads/.gitkeep
+sample_images/*
+!sample_images/.gitkeep
+.pytest_cache/
+.idea/
+.vscode/

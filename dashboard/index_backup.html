@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Intelligent Media Processing Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 24px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header h1 {
+            font-size: 25px;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .refresh-btn {
+            border: none;
+            background: #2563eb;
+            color: white;
+            padding: 11px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .refresh-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 25px;
+        }
+
+        .status {
+            background: white;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 25px;
+            border-left: 4px solid #2563eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            font-size: 14px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #111827;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e5e7eb;
+        }
+
+        .card-title {
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .card-value {
+            font-size: 30px;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+        }
+
+        .analytics-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .analytics-card h3 {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+
+        .analytics-value {
+            font-size: 26px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .loading {
+            color: #6b7280;
+        }
+
+        .error {
+            color: #dc2626;
+        }
+
+        @media (max-width: 1000px) {
+            .cards,
+            .analytics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .cards,
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <div>
+            <h1>Intelligent Media Processing</h1>
+            <p>AI-powered image analysis and processing dashboard</p>
+        </div>
+
+        <button class="refresh-btn" onclick="loadAnalytics()">
+            Refresh Data
+        </button>
+    </header>
+
+    <main class="container">
+
+        <div id="status" class="status">
+            Loading analytics...
+        </div>
+
+        <h2 class="section-title">Processing Overview</h2>
+
+        <section class="cards">
+
+            <div class="card">
+                <div class="card-title">Total Images</div>
+                <div class="card-value" id="total-images">-</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Total Jobs</div>
+                <div class="card-value" id="total-jobs">-</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Pending</div>
+                <div class="card-value" id="pending">-</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Processing</div>
+                <div class="card-value" id="processing">-</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Completed</div>
+                <div class="card-value" id="completed">-</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Failed</div>
+                <div class="card-value" id="failed">-</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Average Confidence</div>
+                <div class="card-value" id="average-confidence">-</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Duplicate Images</div>
+                <div class="card-value" id="duplicates">-</div>
+            </div>
+
+        </section>
+
+        <h2 class="section-title">Image Analysis</h2>
+
+        <section class="analytics-grid">
+
+            <div class="analytics-card">
+                <h3>Blurry Images</h3>
+                <div class="analytics-value" id="blurry">-</div>
+            </div>
+
+            <div class="analytics-card">
+                <h3>Low-Light Images</h3>
+                <div class="analytics-value" id="low-light">-</div>
+            </div>
+
+            <div class="analytics-card">
+                <h3>Screenshots</h3>
+                <div class="analytics-value" id="screenshots">-</div>
+            </div>
+
+            <div class="analytics-card">
+                <h3>Photo-of-Photo</h3>
+                <div class="analytics-value" id="photo-of-photo">-</div>
+            </div>
+
+            <div class="analytics-card">
+                <h3>Tampering Suspected</h3>
+                <div class="analytics-value" id="tampering">-</div>
+            </div>
+
+            <div class="analytics-card">
+                <h3>Valid Vehicle Numbers</h3>
+                <div class="analytics-value" id="valid-vehicles">-</div>
+            </div>
+
+            <div class="analytics-card">
+                <h3>Invalid Vehicle Numbers</h3>
+                <div class="analytics-value" id="invalid-vehicles">-</div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+
+        async function loadAnalytics() {
+
+            const status = document.getElementById("status");
+
+            status.className = "status";
+            status.textContent = "Loading analytics...";
+
+            try {
+
+                const response = await fetch("/api/v1/analytics/summary");
+
+                if (!response.ok) {
+                    throw new Error("Analytics API returned HTTP " + response.status);
+                }
+
+               const data = await response.json();
+
+console.log("Analytics response:", data);
+
+// Processing overview
+document.getElementById("total-images").textContent = data.total_images;
+document.getElementById("total-jobs").textContent = data.total_jobs;
+
+document.getElementById("pending").textContent = data.jobs.pending;
+document.getElementById("processing").textContent = data.jobs.processing;
+document.getElementById("completed").textContent = data.jobs.completed;
+document.getElementById("failed").textContent = data.jobs.failed;
+
+document.getElementById("average-confidence").textContent =
+    (data.average_confidence * 100).toFixed(1) + "%";
+
+document.getElementById("duplicates").textContent =
+    data.quality_issues.duplicates;
+
+// Image analysis
+document.getElementById("blurry").textContent =
+    data.quality_issues.blurry_images;
+
+document.getElementById("low-light").textContent =
+    data.quality_issues.low_light_images;
+
+document.getElementById("screenshots").textContent =
+    data.quality_issues.screenshots;
+
+document.getElementById("photo-of-photo").textContent =
+    data.quality_issues.photo_of_photo;
+
+document.getElementById("tampering").textContent =
+    data.quality_issues.tampering_suspected;
+
+// Vehicle validation
+document.getElementById("valid-vehicles").textContent =
+    data.vehicle_validation.valid;
+
+document.getElementById("invalid-vehicles").textContent =
+    data.vehicle_validation.invalid;
+
+status.textContent = "Analytics data loaded successfully.";
+status.className = "status";
+            } catch (error) {
+
+                console.error("Analytics error:", error);
+
+                status.textContent =
+                    "Unable to load analytics: " + error.message;
+
+                status.className = "status error";
+            }
+        }
+
+        loadAnalytics();
+
+    </script>
+
+</body>
+</html>

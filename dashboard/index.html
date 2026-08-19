@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Media Intelligence</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Inter, Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at 10% 10%, rgba(37, 99, 235, 0.15), transparent 25%),
+                radial-gradient(circle at 90% 20%, rgba(124, 58, 237, 0.12), transparent 25%),
+                #070b14;
+            color: #e5e7eb;
+            min-height: 100vh;
+        }
+
+        .header {
+            border-bottom: 1px solid #1f2937;
+            background: rgba(7, 11, 20, 0.88);
+            backdrop-filter: blur(12px);
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.35);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .online {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #86efac;
+            font-size: 13px;
+        }
+
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #22c55e;
+        }
+
+        .refresh-btn {
+            border: 1px solid #3b82f6;
+            background: rgba(37, 99, 235, 0.15);
+            color: #bfdbfe;
+            padding: 10px 17px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: #2563eb;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .container {
+            max-width: 1450px;
+            margin: 0 auto;
+            padding: 32px 35px 50px;
+        }
+
+        .status {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid #1e293b;
+            border-left: 4px solid #3b82f6;
+            border-radius: 12px;
+            padding: 13px 18px;
+            margin-bottom: 28px;
+            color: #93c5fd;
+            font-size: 13px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .section-subtitle {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: -9px;
+            margin-bottom: 18px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(145deg, rgba(17, 24, 39, 0.95), rgba(15, 23, 42, 0.85));
+            border: 1px solid #1e293b;
+            padding: 21px;
+            border-radius: 15px;
+            transition: 0.25s;
+        }
+
+        .card:hover,
+        .analytics-card:hover {
+            transform: translateY(-3px);
+            border-color: #334155;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+        }
+
+        .card::after {
+            content: "";
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.08);
+            right: -25px;
+            top: -25px;
+        }
+
+        .card-title {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+        }
+
+        .card-value {
+            font-size: 31px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .overview-icon {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .confidence-card {
+            grid-column: span 2;
+            background:
+                linear-gradient(135deg, rgba(37, 99, 235, 0.22), rgba(124, 58, 237, 0.18)),
+                #111827;
+        }
+
+        .confidence-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .confidence-number {
+            font-size: 38px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .progress {
+            height: 8px;
+            background: #1e293b;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 20px;
+            transition: width 1s ease;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.35fr 0.65fr;
+            gap: 18px;
+            margin-bottom: 32px;
+        }
+
+        .panel {
+            background: rgba(15, 23, 42, 0.82);
+            border: 1px solid #1e293b;
+            border-radius: 16px;
+            padding: 23px;
+        }
+
+        .panel-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .panel-title h2 {
+            font-size: 16px;
+            color: white;
+        }
+
+        .panel-title span {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .status-list {
+            display: grid;
+            gap: 13px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0b1220;
+            border: 1px solid #172033;
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+
+        .status-number {
+            font-weight: bold;
+            color: white;
+        }
+
+        .dot-blue,
+        .dot-green,
+        .dot-yellow,
+        .dot-red {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .dot-blue {
+            background: #3b82f6;
+        }
+
+        .dot-green {
+            background: #22c55e;
+            box-shadow: 0 0 8px #22c55e;
+        }
+
+        .dot-yellow {
+            background: #eab308;
+        }
+
+        .dot-red {
+            background: #ef4444;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 32px;
+        }
+
+        .analytics-card {
+            background: rgba(15, 23, 42, 0.82);
+            border: 1px solid #1e293b;
+            border-radius: 14px;
+            padding: 18px;
+            transition: 0.25s;
+        }
+
+        .analytics-card h3 {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+
+        .analytics-value {
+            font-size: 27px;
+            font-weight: 750;
+            color: white;
+        }
+
+        .analytics-label {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .vehicle-panel {
+            background:
+                linear-gradient(135deg, rgba(16, 185, 129, 0.10), rgba(37, 99, 235, 0.08)),
+                rgba(15, 23, 42, 0.82);
+            border: 1px solid #1e293b;
+            border-radius: 16px;
+            padding: 23px;
+        }
+
+        .vehicle-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .vehicle-box {
+            background: #0b1220;
+            border: 1px solid #172033;
+            padding: 18px;
+            border-radius: 12px;
+        }
+
+        .vehicle-box small {
+            color: #64748b;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .vehicle-box strong {
+            font-size: 28px;
+            color: white;
+        }
+
+        .insights {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .insight {
+            background: #0b1220;
+            border: 1px solid #172033;
+            border-radius: 12px;
+            padding: 17px;
+        }
+
+        .insight-icon {
+            font-size: 20px;
+            margin-bottom: 9px;
+        }
+
+        .insight strong {
+            display: block;
+            color: white;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .insight p {
+            color: #64748b;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .footer {
+            text-align: center;
+            color: #475569;
+            font-size: 11px;
+            padding-top: 10px;
+        }
+
+        .error {
+            border-left-color: #ef4444;
+            color: #fca5a5;
+        }
+
+        @media (max-width: 1100px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .analytics-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .header {
+                padding: 20px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .container {
+                padding: 22px 15px 40px;
+            }
+
+            .cards,
+            .analytics-grid,
+            .insights {
+                grid-template-columns: 1fr;
+            }
+
+            .confidence-card {
+                grid-column: span 1;
+            }
+
+            .confidence-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="brand">
+        <div class="logo">🧠</div>
+
+        <div>
+            <h1>AI Media Intelligence</h1>
+            <p>Intelligent Media Processing Pipeline</p>
+        </div>
+    </div>
+
+    <div class="header-right">
+
+        <div class="online">
+            <span class="online-dot"></span>
+            SYSTEM ONLINE
+        </div>
+
+        <button class="refresh-btn" onclick="loadAnalytics()">
+            ↻ Refresh Data
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div id="status" class="status">
+        Initializing AI analytics...
+    </div>
+
+
+    <h2 class="section-title">Processing Overview</h2>
+
+    <p class="section-subtitle">
+        Real-time statistics from the media processing pipeline
+    </p>
+
+
+    <section class="cards">
+
+        <div class="card">
+            <div class="overview-icon">🖼️</div>
+            <div class="card-title">Total Images</div>
+            <div class="card-value" id="total-images">-</div>
+        </div>
+
+        <div class="card">
+            <div class="overview-icon">⚙️</div>
+            <div class="card-title">Total Jobs</div>
+            <div class="card-value" id="total-jobs">-</div>
+        </div>
+
+        <div class="card">
+            <div class="overview-icon">⏳</div>
+            <div class="card-title">Pending</div>
+            <div class="card-value" id="pending">-</div>
+        </div>
+
+        <div class="card">
+            <div class="overview-icon">🔄</div>
+            <div class="card-title">Processing</div>
+            <div class="card-value" id="processing">-</div>
+        </div>
+
+        <div class="card">
+            <div class="overview-icon">✓</div>
+            <div class="card-title">Completed</div>
+            <div class="card-value" id="completed">-</div>
+        </div>
+
+        <div class="card">
+            <div class="overview-icon">⚠️</div>
+            <div class="card-title">Failed</div>
+            <div class="card-value" id="failed">-</div>
+        </div>
+
+        <div class="card confidence-card">
+
+            <div class="card-title">AI Overall Confidence</div>
+
+            <div class="confidence-row">
+
+                <div>
+                    <div class="confidence-number" id="average-confidence">
+                        -
+                    </div>
+
+                    <div class="progress">
+                        <div class="progress-bar" id="confidence-bar"></div>
+                    </div>
+                </div>
+
+                <div style="font-size:38px;">
+                    🎯
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card">
+            <div class="overview-icon">♻️</div>
+            <div class="card-title">Duplicate Images</div>
+            <div class="card-value" id="duplicates">-</div>
+        </div>
+
+    </section>
+
+
+    <div class="main-grid">
+
+        <section class="panel">
+
+            <div class="panel-title">
+                <h2>⚡ Processing Status</h2>
+                <span>Live jobs</span>
+            </div>
+
+            <div class="status-list">
+
+                <div class="status-item">
+                    <div class="status-left">
+                        <span class="dot-yellow"></span>
+                        Pending
+                    </div>
+
+                    <span class="status-number" id="pending-status">-</span>
+                </div>
+
+                <div class="status-item">
+                    <div class="status-left">
+                        <span class="dot-blue"></span>
+                        Processing
+                    </div>
+
+                    <span class="status-number" id="processing-status">-</span>
+                </div>
+
+                <div class="status-item">
+                    <div class="status-left">
+                        <span class="dot-green"></span>
+                        Completed
+                    </div>
+
+                    <span class="status-number" id="completed-status">-</span>
+                </div>
+
+                <div class="status-item">
+                    <div class="status-left">
+                        <span class="dot-red"></span>
+                        Failed
+                    </div>
+
+                    <span class="status-number" id="failed-status">-</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="vehicle-panel">
+
+            <div class="panel-title">
+                <h2>🚗 Vehicle Validation</h2>
+                <span>OCR + Regex</span>
+            </div>
+
+            <div class="vehicle-stats">
+
+                <div class="vehicle-box">
+                    <small>Valid Numbers</small>
+                    <strong id="valid-vehicles">-</strong>
+                </div>
+
+                <div class="vehicle-box">
+                    <small>Invalid Numbers</small>
+                    <strong id="invalid-vehicles">-</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <h2 class="section-title">Image Intelligence</h2>
+
+    <p class="section-subtitle">
+        Computer vision quality and anomaly detection signals
+    </p>
+
+
+    <section class="analytics-grid">
+
+        <div class="analytics-card">
+            <h3>BLUR DETECTION</h3>
+            <div class="analytics-value" id="blurry">-</div>
+            <div class="analytics-label">Images flagged</div>
+        </div>
+
+        <div class="analytics-card">
+            <h3>LOW LIGHT</h3>
+            <div class="analytics-value" id="low-light">-</div>
+            <div class="analytics-label">Images flagged</div>
+        </div>
+
+        <div class="analytics-card">
+            <h3>SCREENSHOTS</h3>
+            <div class="analytics-value" id="screenshots">-</div>
+            <div class="analytics-label">Suspected</div>
+        </div>
+
+        <div class="analytics-card">
+            <h3>PHOTO OF PHOTO</h3>
+            <div class="analytics-value" id="photo-of-photo">-</div>
+            <div class="analytics-label">Suspected</div>
+        </div>
+
+        <div class="analytics-card">
+            <h3>TAMPERING</h3>
+            <div class="analytics-value" id="tampering">-</div>
+            <div class="analytics-label">Suspected</div>
+        </div>
+
+    </section>
+
+
+    <section class="panel">
+
+        <div class="panel-title">
+            <h2>🔎 AI Analysis Insights</h2>
+            <span>Automated signals</span>
+        </div>
+
+        <div class="insights">
+
+            <div class="insight">
+                <div class="insight-icon">📱</div>
+                <strong>Screenshot Detection</strong>
+                <p>
+                    Identifies images that may originate from mobile or
+                    desktop screens.
+                </p>
+            </div>
+
+            <div class="insight">
+                <div class="insight-icon">🖼️</div>
+                <strong>Photo-of-Photo</strong>
+                <p>
+                    Uses image geometry and contour analysis to identify
+                    possible photographed displays or documents.
+                </p>
+            </div>
+
+            <div class="insight">
+                <div class="insight-icon">🛡️</div>
+                <strong>Tampering Analysis</strong>
+                <p>
+                    Lightweight forensic heuristics identify potential
+                    manipulation signals.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <div class="footer">
+        Intelligent Media Processing Pipeline · AI Engineering Take-Home Project
+        <br>
+        Last updated: <span id="last-updated">-</span>
+    </div>
+
+</main>
+
+
+<script>
+
+    async function loadAnalytics() {
+
+        const status = document.getElementById("status");
+
+        status.className = "status";
+        status.textContent = "Loading AI analytics...";
+
+        try {
+
+            const response =
+                await fetch("/api/v1/analytics/summary");
+
+            if (!response.ok) {
+                throw new Error(
+                    "Analytics API returned HTTP " + response.status
+                );
+            }
+
+            const data = await response.json();
+
+            console.log("Analytics response:", data);
+
+
+            // Processing overview
+
+            document.getElementById("total-images").textContent =
+                data.total_images;
+
+            document.getElementById("total-jobs").textContent =
+                data.total_jobs;
+
+            document.getElementById("pending").textContent =
+                data.jobs.pending;
+
+            document.getElementById("processing").textContent =
+                data.jobs.processing;
+
+            document.getElementById("completed").textContent =
+                data.jobs.completed;
+
+            document.getElementById("failed").textContent =
+                data.jobs.failed;
+
+
+            // Status panel
+
+            document.getElementById("pending-status").textContent =
+                data.jobs.pending;
+
+            document.getElementById("processing-status").textContent =
+                data.jobs.processing;
+
+            document.getElementById("completed-status").textContent =
+                data.jobs.completed;
+
+            document.getElementById("failed-status").textContent =
+                data.jobs.failed;
+
+
+            // Confidence
+
+            const confidence =
+                data.average_confidence * 100;
+
+            document.getElementById("average-confidence").textContent =
+                confidence.toFixed(1) + "%";
+
+            document.getElementById("confidence-bar").style.width =
+                confidence + "%";
+
+
+            // Duplicate
+
+            document.getElementById("duplicates").textContent =
+                data.quality_issues.duplicates;
+
+
+            // Image analysis
+
+            document.getElementById("blurry").textContent =
+                data.quality_issues.blurry_images;
+
+            document.getElementById("low-light").textContent =
+                data.quality_issues.low_light_images;
+
+            document.getElementById("screenshots").textContent =
+                data.quality_issues.screenshots;
+
+            document.getElementById("photo-of-photo").textContent =
+                data.quality_issues.photo_of_photo;
+
+            document.getElementById("tampering").textContent =
+                data.quality_issues.tampering_suspected;
+
+
+            // Vehicle validation
+
+            document.getElementById("valid-vehicles").textContent =
+                data.vehicle_validation.valid;
+
+            document.getElementById("invalid-vehicles").textContent =
+                data.vehicle_validation.invalid;
+
+
+            // Status
+
+            status.textContent =
+                "✓ Analytics data loaded successfully.";
+
+            status.className = "status";
+
+
+            // Timestamp
+
+            document.getElementById("last-updated").textContent =
+                new Date().toLocaleString();
+
+        }
+
+        catch (error) {
+
+            console.error("Analytics error:", error);
+
+            status.textContent =
+                "Unable to load analytics: " + error.message;
+
+            status.className = "status error";
+
+        }
+
+    }
+
+
+    loadAnalytics();
+
+</script>
+
+</body>
+</html>
