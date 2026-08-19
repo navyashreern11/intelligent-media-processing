@@ -441,7 +441,7 @@ This separation keeps image metadata, job lifecycle information, and analysis re
 - The in-memory queue is suitable for this prototype but is not intended for durable production workloads.
 - Tesseract OCR is optional; if unavailable, the pipeline continues with `OCR_UNAVAILABLE`.
 
-## 18. Screenshots
+## 20. Screenshots
 
 ### API Documentation
 ![API Documentation](screenshots/IMPP%20pipeline.png)
